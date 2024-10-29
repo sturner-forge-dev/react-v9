@@ -1,13 +1,7 @@
-<<<<<<< HEAD
 .DS_Store
 node_modules/
 dist/
 .env
 coverage/
 .vscode/
-=======
-node_modules/
-.DS_Store
-.env
->>>>>>> 79e0c40 (initial commit :octocat:)
 api/pizza.sqlite
