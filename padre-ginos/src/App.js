@@ -10,7 +10,7 @@ const Pizza = (props) => {
 
 const App = () => {
   return React.createElement("div", {}, [
-    React.createElement("h1", {}, "Stevens Gino's"),
+    React.createElement("h1", {}, "Padre Gino's"),
     React.createElement(Pizza, {
       name: "Pepperoni",
       description: "A pizza with pepperoni",
