@@ -1,9 +1,9 @@
-import { createLazyFileRoute } from "@tanstack/react-router";
-import { useMutation } from "@tanstack/react-query";
-import postContact from "../api/postContact";
+import { createLazyFileRoute } from '@tanstack/react-router';
+import { useMutation } from '@tanstack/react-query';
+import postContact from '../api/postContact';
 
-export const Route = createLazyFileRoute("/contact")({
-  component: ContactRoute,
+export const Route = createLazyFileRoute('/contact')({
+  component: ContactRoute
 });
 
 function ContactRoute() {
@@ -13,11 +13,11 @@ function ContactRoute() {
       const formaData = new FormData(e.target);
 
       return postContact(
-        formaData.get("name"),
-        formaData.get("email"),
-        formaData.get("message"),
+        formaData.get('name'),
+        formaData.get('email'),
+        formaData.get('message')
       );
-    },
+    }
   });
 
   if (mutation.isError) {
