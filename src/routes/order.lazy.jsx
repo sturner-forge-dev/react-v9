@@ -1,36 +1,36 @@
-import { useState, useEffect, useContext } from "react";
-import { createLazyFileRoute } from "@tanstack/react-router";
-import Pizza from "../Pizza";
-import Cart from "../Cart";
-import { CartContext } from "../contexts";
+import { useState, useEffect, useContext } from 'react';
+import { createLazyFileRoute } from '@tanstack/react-router';
+import Pizza from '../Pizza';
+import Cart from '../Cart';
+import { CartContext } from '../contexts';
 
-export const Route = createLazyFileRoute("/order")({
-  component: Order,
+export const Route = createLazyFileRoute('/order')({
+  component: Order
 });
 
-const intl = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
+const intl = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD'
 });
 
 function Order() {
   const [pizzaTypes, setPizzaTypes] = useState([]);
-  const [pizzaType, setPizzaType] = useState("pepperoni");
-  const [pizzaSize, setPizzaSize] = useState("M");
+  const [pizzaType, setPizzaType] = useState('pepperoni');
+  const [pizzaSize, setPizzaSize] = useState('M');
   const [cart, setCart] = useContext(CartContext);
   const [loading, setLoading] = useState(true);
 
   async function checkout() {
     setLoading(true);
 
-    await fetch("/api/order", {
-      method: "POST",
+    await fetch('/api/order', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        cart,
-      }),
+        cart
+      })
     });
 
     setCart([]);
@@ -45,7 +45,7 @@ function Order() {
   }
 
   async function fetchPizzaTypes() {
-    const response = await fetch("/api/pizzas");
+    const response = await fetch('/api/pizzas');
     const data = await response.json();
     setPizzaTypes(data);
     setLoading(false);
@@ -55,19 +55,15 @@ function Order() {
     fetchPizzaTypes();
   }, []);
 
+  function addToCart() {
+    setCart([...cart, { pizza: selectedPizza, size: pizzaSize, price }]);
+  }
+
   return (
     <div className="order-page">
       <div className="order">
         <h2>Create Order</h2>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            setCart([
-              ...cart,
-              { pizza: selectedPizza, size: pizzaSize, price },
-            ]);
-          }}
-        >
+        <form action={addToCart}>
           <div>
             <div>
               <label htmlFor="pizza-type">Pizza Type</label>
@@ -88,7 +84,7 @@ function Order() {
               <div>
                 <span>
                   <input
-                    checked={pizzaSize === "S"}
+                    checked={pizzaSize === 'S'}
                     type="radio"
                     name="pizza-size"
                     value="S"
@@ -99,7 +95,7 @@ function Order() {
                 </span>
                 <span>
                   <input
-                    checked={pizzaSize === "M"}
+                    checked={pizzaSize === 'M'}
                     type="radio"
                     name="pizza-size"
                     value="M"
@@ -110,7 +106,7 @@ function Order() {
                 </span>
                 <span>
                   <input
-                    checked={pizzaSize === "L"}
+                    checked={pizzaSize === 'L'}
                     type="radio"
                     name="pizza-size"
                     value="L"

@@ -1,48 +1,53 @@
-import { createLazyFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import getPastOrders from "../api/getPastOrders";
-import getPastOrder from "../api/getPastOrder";
-import Modal from "../Modal";
-import { priceConverter } from "../useCurrency";
-import ErrorBoundary from "../ErrorBoundary";
+import { createLazyFileRoute } from '@tanstack/react-router';
+import { useState, Suspense, use } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import getPastOrders from '../api/getPastOrders';
+import getPastOrder from '../api/getPastOrder';
+import Modal from '../Modal';
+import { priceConverter } from '../useCurrency';
+import ErrorBoundary from '../ErrorBoundary';
 
-export const Route = createLazyFileRoute("/past")({
-  component: ErrorBoundaryWrappedPastOrderRoutes,
+export const Route = createLazyFileRoute('/past')({
+  component: ErrorBoundaryWrappedPastOrderRoutes
 });
 
 function ErrorBoundaryWrappedPastOrderRoutes() {
+  const [page, setPage] = useState(1);
+  const loadedPromise = useQuery({
+    queryKey: ['past-orders', page],
+    queryFn: () => getPastOrders(page),
+    staleTime: 30000
+  }).promise;
+
   return (
     <ErrorBoundary>
-      <PastOrdersRoute />
+      <Suspense
+        fallback={
+          <div className="past-orders">
+            <h2>Loading Past Orders...</h2>
+          </div>
+        }
+      >
+        <PastOrdersRoute
+          loadedPromise={loadedPromise}
+          page={page}
+          setPage={setPage}
+        />
+      </Suspense>
     </ErrorBoundary>
   );
 }
 
-function PastOrdersRoute() {
-  const [page, setPage] = useState(1);
+function PastOrdersRoute({ page, setPage, loadedPromise }) {
+  const data = use(loadedPromise);
+
   const [focusedOrder, setFocusedOrder] = useState();
-
-  const { isLoading, data } = useQuery({
-    queryKey: ["past-orders", page],
-    queryFn: () => getPastOrders(page),
-    staleTime: 30000,
-  });
-
   const { isLoading: isLoadingPastOrder, data: pastOrderData } = useQuery({
-    queryKey: ["past-order", focusedOrder],
+    queryKey: ['past-order', focusedOrder],
     queryFn: () => getPastOrder(focusedOrder),
     staleTime: 24 * 60 * 60 * 1000,
-    enabled: !!focusedOrder,
+    enabled: !!focusedOrder
   });
-
-  if (isLoading) {
-    return (
-      <div className="past-orders">
-        <h2>LOADING...</h2>
-      </div>
-    );
-  }
 
   return (
     <div className="past-orders">
